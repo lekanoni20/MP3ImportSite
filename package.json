@@ -1,0 +1,24 @@
+{
+  "name": "mp3importsite",
+  "version": "1.0.0",
+  "description": "A Project that converts MP3 files to text",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lekanoni20/MP3ImportSite.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lekanoni20/MP3ImportSite/issues"
+  },
+  "homepage": "https://github.com/lekanoni20/MP3ImportSite#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {}
+}
