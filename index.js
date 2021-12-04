@@ -7,6 +7,7 @@ const port = process.env.PORT || 3000;
 const app = express();
 
 app.use('/css',express.static(__dirname +'/css'));
+app.use('/Images',express.static(__dirname +'/Images'));
 
 app.get('/', async (request, response) => { 
     response.send(await readFile('./home.html', 'utf8'));
