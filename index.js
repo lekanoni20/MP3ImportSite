@@ -41,6 +41,14 @@ app.get('/spanish', async (request, response) => {
     response.send(await readFile('./LangaugeLearningSceens/Spanish.html', 'utf8'));
 });
 
+app.get('/contact', async (request, response) => { 
+    response.send(await readFile('./contact.html', 'utf8'));
+});
+
+app.get('/error', async (request, response) => { 
+    response.send(await readFile('./error.html', 'utf8'));
+});
+
 app.listen(port, () => console.log('App avaliable on http:localhost:3000'))
 
 
