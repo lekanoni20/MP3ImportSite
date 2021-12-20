@@ -8,6 +8,8 @@ const app = express();
 
 app.use('/css',express.static(__dirname +'/css'));
 app.use('/Images',express.static(__dirname +'/Images'));
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json());
 
 app.get('/', async (request, response) => { 
     response.send(await readFile('./home.html', 'utf8'));
@@ -47,6 +49,11 @@ app.get('/contact', async (request, response) => {
 
 app.get('/error', async (request, response) => { 
     response.send(await readFile('./error.html', 'utf8'));
+});
+
+app.post('/contactlink', async (request, response) => { 
+    console.log("!!!!!name" + request.body.name);
+    response.send(request.body.name);
 });
 
 app.listen(port, () => console.log('App avaliable on http:localhost:3000'))
