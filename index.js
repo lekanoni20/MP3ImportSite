@@ -3,6 +3,8 @@ const express = require('express');
 const { readFile } = require('fs').promises;
 const path = require('path');
 const port = process.env.PORT || 3000;
+"use strict";
+const nodemailer = require("nodemailer");
 
 const app = express();
 
@@ -52,8 +54,29 @@ app.get('/error', async (request, response) => {
 });
 
 app.post('/contactlink', async (request, response) => { 
-    console.log("!!!!!name" + request.body.name);
-    response.send(request.body.name);
+    // create reusable transporter object using the default SMTP transport using test account from ethereal
+    let transporter = nodemailer.createTransport({
+        host: "smtp.ethereal.email",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+        user: "emily.purdy68@ethereal.email", // generated ethereal user
+        pass: "Pb7xgcNfaj4gVhYcdd" // generated ethereal password
+        },
+        tls: {
+          rejectUnauthorized: false
+        }
+    });
+
+    // send mail with defined transport object
+    let info = await transporter.sendMail({
+        from: request.body.email, // sender address
+        to: "TestEmail@gmail.com", // list of receivers
+        subject: "Email Query from " + request.body.name, // Subject line
+        text: request.body.queryInfo // plain text body
+    });
+
+    response.send("Email Sent!");
 });
 
 app.listen(port, () => console.log('App avaliable on http:localhost:3000'))
