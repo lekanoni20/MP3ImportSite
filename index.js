@@ -3,6 +3,8 @@ const express = require('express');
 const { readFile } = require('fs').promises;
 const path = require('path');
 const port = process.env.PORT || 3000;
+const mysql = require('mysql2');
+const mysqlScripts = require("./mysqlScripts");
 "use strict";
 const nodemailer = require("nodemailer");
 
@@ -12,6 +14,8 @@ app.use('/css',express.static(__dirname +'/css'));
 app.use('/Images',express.static(__dirname +'/Images'));
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json());
+
+//GET REQUESTS
 
 app.get('/', async (request, response) => { 
     response.send(await readFile('./home.html', 'utf8'));
@@ -53,32 +57,40 @@ app.get('/error', async (request, response) => {
     response.send(await readFile('./error.html', 'utf8'));
 });
 
+//POST REQUESTS
+
 app.post('/contactlink', async (request, response) => { 
-    // create reusable transporter object using the default SMTP transport using test account from ethereal
-    let transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
-        secure: false, // true for 465, false for other ports
-        auth: {
-        user: "emily.purdy68@ethereal.email", // generated ethereal user
-        pass: "Pb7xgcNfaj4gVhYcdd" // generated ethereal password
-        },
-        tls: {
-          rejectUnauthorized: false
-        }
-    });
+    const datenow = new Date();
+    try {
+        // create reusable transporter object using the default SMTP transport using test account from ethereal
+        let transporter = nodemailer.createTransport({
+            host: "smtp.ethereal.email",
+            port: 587,
+            secure: false, // true for 465, false for other ports
+            auth: {
+            user: "emily.purdy68@ethereal.email", // generated ethereal user
+            pass: "Pb7xgcNfaj4gVhYcdd" // generated ethereal password
+            },
+            tls: {
+            rejectUnauthorized: false
+            }
+        });
 
-    // send mail with defined transport object
-    let info = await transporter.sendMail({
-        from: request.body.email, // sender address
-        to: "TestEmail@gmail.com", // list of receivers
-        subject: "Email Query from " + request.body.name, // Subject line
-        text: request.body.queryInfo // plain text body
-    });
-
-    response.send("Email Sent!");
+        // send mail with defined transport object
+        let info = await transporter.sendMail({
+            from: request.body.email, // sender address
+            to: "TestEmail@gmail.com", // list of receivers
+            subject: "Email Query from " + request.body.name, // Subject line
+            text: request.body.queryInfo // plain text body
+        });
+        response.send("Email Sent!");
+    } catch(err) {
+        mysqlScripts.insertSingleQuery("INSERT INTO error (ErrorDesc, ErrorDateTime) VALUES (?, ?)", [err.message,datenow]);
+        response.send("Error!! Check Error Log Page for more details!!!");
+    }
 });
 
+//APP LISTENER
 app.listen(port, () => console.log('App avaliable on http:localhost:3000'))
 
 
