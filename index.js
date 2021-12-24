@@ -107,7 +107,7 @@ app.post('/contactlink', async (request, response) => {
         });
         response.send("Email Sent!");
     } catch(err) {
-        mysqlScripts.runQuery("insert", "INSERT INTO error (ErrorDesc, ErrorDateTime) VALUES (?, ?)", [err.message,datenow]);
+        mysqlScripts.runQuery("INSERT INTO error (ErrorDesc, ErrorDateTime) VALUES (?, ?)", [err.message,datenow]);
         response.send("Error!! Check Error Log Page for more details!!!");
     }
 });
