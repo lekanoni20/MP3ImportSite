@@ -22,9 +22,22 @@
         <h1>Errors</h1>
     </div>
     <script>
-    $.get("navigation", function(data){
-        $("#nav-placeholder").replaceWith(data);
-    });
+        $.get("navigation", function(data){
+            $("#nav-placeholder").replaceWith(data);
+        });
+        $( document ).ready(function() {
+          $.ajax({
+            url: '/errorTable',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (response) {
+                alert(response);
+            },
+            error: function () {
+                alert("error");
+            }
+          });
+        });
     </script>
 </body>
 </html>

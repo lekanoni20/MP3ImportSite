@@ -5,6 +5,13 @@ const path = require('path');
 const port = process.env.PORT || 3000;
 const mysql = require('mysql2');
 const mysqlScripts = require("./mysqlScripts");
+const datenow = new Date();
+const con = mysql.createConnection({
+    host: "Lekan",
+    user: "LekanOni",
+    password: "12qwaszx12",
+    database: "importlangaugeapp"
+});
 "use strict";
 const nodemailer = require("nodemailer");
 
@@ -57,10 +64,25 @@ app.get('/error', async (request, response) => {
     response.send(await readFile('./error.html', 'utf8'));
 });
 
+app.get('/errorTable', async (request, response) => { 
+    try {
+        con.connect(function(err) {
+            let sql = "select ErrorDesc, ErrorDateTime from error"
+            if (err) throw err;
+            con.query(sql, function (err, result) {
+              if (err) throw err;
+              response.send(result);
+            });
+        });
+    } catch(err) {
+        mysqlScripts.runQuery("INSERT INTO error (ErrorDesc, ErrorDateTime) VALUES (?, ?)", [err.message,datenow]);
+        response.send("Error!! Check Error Log Page for more details!!!");
+    }
+});
+
 //POST REQUESTS
 
 app.post('/contactlink', async (request, response) => { 
-    const datenow = new Date();
     try {
         // create reusable transporter object using the default SMTP transport using test account from ethereal
         let transporter = nodemailer.createTransport({
@@ -85,7 +107,7 @@ app.post('/contactlink', async (request, response) => {
         });
         response.send("Email Sent!");
     } catch(err) {
-        mysqlScripts.insertSingleQuery("INSERT INTO error (ErrorDesc, ErrorDateTime) VALUES (?, ?)", [err.message,datenow]);
+        mysqlScripts.runQuery("insert", "INSERT INTO error (ErrorDesc, ErrorDateTime) VALUES (?, ?)", [err.message,datenow]);
         response.send("Error!! Check Error Log Page for more details!!!");
     }
 });
